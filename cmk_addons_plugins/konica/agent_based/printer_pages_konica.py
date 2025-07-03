@@ -13,26 +13,24 @@
 #  total counter       (1.3.6.1.4.1.18334.1.1.1.5.7.2.1.1.0)
 #  scans               (1.3.6.1.4.1.18334.1.1.1.5.7.2.1.5.0)
 
-
 from typing import List
 
-try:
-    from cmk.plugins.lib.printer import (
-        check_printer_pages_types,
-        discovery_printer_pages,
-        OID_sysObjectID,
-        Section,
-    )
-except ImportError:
-    from .utils.printer import (
-        check_printer_pages_types,
-        discovery_printer_pages,
-        OID_sysObjectID,
-        Section,
-    )
+from cmk.agent_based.v2 import (
+    all_of,
+    CheckPlugin,
+    exists,
+    SNMPSection,
+    SNMPTree,
+    startswith,
+    StringTable,
+)
 
-from .agent_based_api.v1 import register, SNMPTree, all_of, exists, startswith
-from .agent_based_api.v1.type_defs import StringTable
+from cmk.plugins.lib.printer import (
+    check_printer_pages_types,
+    discovery_printer_pages,
+    OID_sysObjectID,
+    Section,
+)
 
 
 DETECT_KONICA_HAS_TOTAL = all_of(
@@ -71,7 +69,8 @@ def parse_printer_pages_konica(string_table: List[StringTable]) -> Section:
         pass
     return parsed
 
-register.snmp_section(
+
+snmp_section_konica_pages = SNMPSection(
     name="konica_pages",
     detect=DETECT_KONICA_HAS_TOTAL,
     supersedes=["printer_pages"],
@@ -95,7 +94,7 @@ register.snmp_section(
     ],
 )
 
-register.check_plugin(
+check_plugin_konica_pages = CheckPlugin(
     name="konica_pages",
     service_name="Pages",
     discovery_function=discovery_printer_pages,
