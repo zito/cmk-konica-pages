@@ -25,12 +25,20 @@ from cmk.agent_based.v2 import (
     StringTable,
 )
 
-from cmk.plugins.lib.printer import (
-    check_printer_pages_types,
-    discovery_printer_pages,
-    OID_sysObjectID,
-    Section,
-)
+try:
+    from cmk.plugins.printer.lib import (
+        check_printer_pages_types,
+        discovery_printer_pages,
+        OID_sysObjectID,
+        Section,
+    )
+except ModuleNotFoundError:
+    from cmk.plugins.lib.printer import (
+        check_printer_pages_types,
+        discovery_printer_pages,
+        OID_sysObjectID,
+        Section,
+    )
 
 
 DETECT_KONICA_HAS_TOTAL = all_of(
